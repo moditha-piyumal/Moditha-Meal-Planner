@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Meal Abacus</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+    <!-- ============================= -->
+    <!-- 🔘 TOP CONTROLS -->
+    <!-- ============================= -->
+    <div id="top-controls">
+        <button id="planBtn">Plan Now</button>
+        <button id="doneBtn" hidden>Done</button>
+    </div>
+
+    <!-- ============================= -->
+    <!-- 🧮 ABACUS CONTAINER -->
+    <!-- ============================= -->
+    <div id="abacus">
+
+        <!-- COLUMN TEMPLATE × 12 -->
+
+        <div class="column" data-index="0">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 1</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+
+        <div class="column" data-index="1">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 2</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+
+        <div class="column" data-index="2">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 3</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="3">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 4</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="4">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 5</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="5">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 6</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+
+            </div>
+        </div>
+        <div class="column" data-index="6">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 7</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="7">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 8</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="8">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 9</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="9">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 10</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="10">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 11</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+        <div class="column" data-index="11">
+            <div class="bar">
+                <div class="bar-consumed"></div>
+            </div>
+            <div class="info">
+                <div class="food-name">Food 12</div>
+                <div class="remaining">Remaining: -- kcal</div>
+                <button class="minus-btn">−</button>
+            </div>
+            <div class="plan-inputs" hidden>
+                <input type="text" placeholder="Food name" />
+                <input type="number" placeholder="Total servings" />
+                <input type="number" placeholder="Total calories" />
+                <input type="number" placeholder="Serving step" />
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+    <!-- Renderer logic (later) -->
+    <script src="renderer.js"></script>
+</body>
+
+</html>
