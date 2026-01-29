@@ -1,0 +1,128 @@
+/* ============================================
+   🌍 GLOBAL BASICS
+============================================ */
+
+* {
+    box-sizing: border-box;
+    font-family: system-ui, sans-serif;
+}
+
+body {
+    margin: 12px;
+    background: #ffffff;
+    color: #111;
+}
+
+/* ============================================
+   🔘 TOP CONTROLS
+============================================ */
+
+#top-controls {
+    margin-bottom: 20px;
+}
+
+#top-controls button {
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* ============================================
+   🧮 ABACUS LAYOUT
+============================================ */
+
+#abacus {
+    display: flex;
+    /* 🔑 side-by-side columns */
+    gap: 12px;
+    /* space between columns */
+    align-items: flex-end;
+    /* bars align at bottom */
+}
+
+/* ============================================
+   🧱 COLUMN
+============================================ */
+
+.column {
+    width: 70px;
+    /* fixed width for each food */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ============================================
+   📊 BAR (ABACUS STYLE)
+============================================ */
+
+.bar {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    /* ALL columns same height */
+    background-color: #e0e7ff;
+    /* base color = available */
+    border-radius: 6px;
+    overflow: hidden;
+    /* important for overlay */
+    margin-bottom: 8px;
+}
+
+/* Consumed overlay */
+.bar-consumed {
+    position: absolute;
+    bottom: 0;
+    /* grows upward */
+    width: 100%;
+    height: 0%;
+    /* JS will change this */
+    background-color: #6366f1;
+    /* consumed color */
+}
+
+/* ============================================
+   ℹ️ INFO SECTION
+============================================ */
+
+.info {
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.food-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.remaining {
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+/* Minus button */
+.minus-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* ============================================
+   📝 PLAN MODE INPUTS
+============================================ */
+
+.plan-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.plan-inputs input {
+    width: 100%;
+    font-size: 12px;
+    padding: 2px;
+}
