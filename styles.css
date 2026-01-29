@@ -114,11 +114,22 @@ body {
 ============================================ */
 
 .plan-inputs {
-    display: flex;
+    display: none;
+    /* hidden by default */
     flex-direction: column;
     gap: 4px;
     width: 100%;
     margin-top: 6px;
+}
+
+.column.plan-mode .plan-inputs {
+    display: flex;
+    /* visible in plan mode */
+}
+
+.column.plan-mode .minus-btn {
+    display: none;
+    /* hide minus in plan mode */
 }
 
 .plan-inputs input {
