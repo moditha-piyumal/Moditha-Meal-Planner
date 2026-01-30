@@ -1,14 +1,40 @@
 {
-	"name": "Moditha-Meal-Abacus",
-	"version": "0.1.0",
+	"name": "moditha-meal-abacus",
+	"version": "0.1.1",
 	"description": "A simple abacus-style meal planner built with Electron",
 	"main": "main.js",
 	"author": "Moditha",
 	"license": "MIT",
 	"scripts": {
-		"start": "electron ."
+		"start": "electron .",
+		"build": "electron-builder"
 	},
 	"devDependencies": {
-		"electron": "^36.2.0"
+		"electron": "^36.2.0",
+		"electron-builder": "^26.0.12"
+	},
+	"build": {
+		"appId": "com.moditha.mealabacus",
+		"productName": "Meal Abacus",
+		"asar": true,
+		"directories": {
+			"output": "dist"
+		},
+		"files": [
+			"**/*",
+			"!dist"
+		],
+		"win": {
+			"target": "nsis",
+			"icon": "assets/icon.ico"
+		},
+		"nsis": {
+			"oneClick": false,
+			"allowToChangeInstallationDirectory": true,
+			"createDesktopShortcut": true,
+			"createStartMenuShortcut": true,
+			"installerIcon": "assets/icon.ico",
+			"uninstallerIcon": "assets/icon.ico"
+		}
 	}
 }

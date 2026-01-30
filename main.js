@@ -36,7 +36,7 @@ function createWindow() {
 	mainWindow.loadFile("index.html");
 
 	// Optional: open DevTools while building
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 
 	// When window is closed
 	mainWindow.on("closed", () => {

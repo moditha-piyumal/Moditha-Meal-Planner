@@ -15,15 +15,36 @@ let foods = []; // index = column index
 // =============================================
 // 🟡 ENTER PLAN MODE
 // =============================================
-planBtn.addEventListener("click", () => {
-	columns.forEach((column) => {
-		column.classList.add("plan-mode");
-		const planInputs = column.querySelector(".plan-inputs");
-		if (planInputs) {
-			planInputs.hidden = false;
-		}
-	});
+// planBtn.addEventListener("click", () => {
+// 	columns.forEach((column) => {
+// 		column.classList.add("plan-mode");
+// 		const planInputs = column.querySelector(".plan-inputs");
+// 		if (planInputs) {
+// 			planInputs.hidden = false;
+// 		}
+// 	});
 
+// 	planBtn.style.display = "none";
+// 	doneBtn.hidden = false;
+// });
+planBtn.addEventListener("click", async () => {
+	// Check if a plan already exists
+	const saved = await window.mealAPI.loadData();
+
+	if (saved?.hasActivePlan) {
+		const confirmed = confirm(
+			"You already have an active monthly plan.\n\n" +
+				"Starting a new plan will REPLACE it.\n\n" +
+				"Do you want to continue?",
+		);
+
+		if (!confirmed) {
+			return; // ⛔ Abort accidental reset
+		}
+	}
+
+	// ✅ User confirmed (or no existing plan)
+	columns.forEach((col) => col.classList.add("plan-mode"));
 	planBtn.style.display = "none";
 	doneBtn.hidden = false;
 });
