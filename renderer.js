@@ -1,12 +1,20 @@
 // =============================================
-// 🎛️ PLAN MODE TOGGLE — Meal Abacus (FIXED)
+// 🧠 MEAL ABACUS — renderer.js (CLEAN)
 // =============================================
 
+// Top buttons
 const planBtn = document.getElementById("planBtn");
 const doneBtn = document.getElementById("doneBtn");
+
+// Columns
 const columns = document.querySelectorAll(".column");
 
-// ENTER PLAN MODE
+// In-memory state (must exist BEFORE load runs)
+let foods = []; // index = column index
+
+// =============================================
+// 🟡 ENTER PLAN MODE
+// =============================================
 planBtn.addEventListener("click", () => {
 	columns.forEach((column) => {
 		column.classList.add("plan-mode");
@@ -16,113 +24,30 @@ planBtn.addEventListener("click", () => {
 	doneBtn.hidden = false;
 });
 
-// EXIT PLAN MODE
+// =============================================
+// 🟢 EXIT PLAN MODE (DONE) — Set plan + Save
+// =============================================
 doneBtn.addEventListener("click", () => {
-	foods = [];
+	foods = []; // new plan overwrites old plan in memory
+	let isValid = true;
+	isValid = false;
+	return;
 
-	columns.forEach((column, index) => {
+	for (let index = 0; index < columns.length; index++) {
+		const column = columns[index];
+
+		// Remove plan-mode (hides inputs via CSS)
 		column.classList.remove("plan-mode");
 
-		// 🔧 FIX: clear old inline hide
-		const minusBtn = column.querySelector(".minus-btn");
-		minusBtn.style.display = "";
-
-		// ... rest of your existing code ...
-	});
-
-	doneBtn.hidden = true;
-	planBtn.style.display = "inline-block";
-});
-
-// =============================================
-// 🔄 LOAD SAVED PLAN ON STARTUP
-// =============================================
-
-(async () => {
-	const saved = await window.mealAPI.loadData();
-
-	if (!saved || !saved.hasActivePlan || !Array.isArray(saved.foods)) {
-		console.log("No active plan found.");
-		return;
-	}
-
-	foods = [];
-
-	columns.forEach((column, index) => {
-		const food = saved.foods[index];
-		if (!food) return;
-
-		foods[index] = food;
-
-		// Restore UI
-		column.querySelector(".food-name").textContent = food.name;
-
-		const caloriesPerServing = food.totalCalories / food.totalServings;
-
-		const consumedCalories = food.consumedServings * caloriesPerServing;
-
-		const remainingCalories = Math.max(
-			0,
-			Math.round(food.totalCalories - consumedCalories),
-		);
-
-		column.querySelector(".remaining").textContent =
-			`Remaining: ${food.totalServings - food.consumedServings}/${food.totalServings} servings • ${remainingCalories} kcal`;
-
-		column.querySelector(".bar-consumed").style.height =
-			`${(food.consumedServings / food.totalServings) * 100}%`;
-	});
-
-	console.log("Plan restored from storage.");
-})();
-
-// =============================================
-// 🟡 ENTER PLAN MODE
-// =============================================
-planBtn.addEventListener("click", () => {
-	columns.forEach((column) => {
-		// Show plan inputs
-		const planInputs = column.querySelector(".plan-inputs");
-		planInputs.hidden = false;
-
-		// Hide minus button
-		const minusBtn = column.querySelector(".minus-btn");
-		minusBtn.style.display = "none";
-	});
-
-	// Toggle top buttons
-	planBtn.style.display = "none";
-	doneBtn.hidden = false;
-});
-// =============================================
-// 🧠 IN-MEMORY PLAN STATE
-// =============================================
-
-let foods = []; // one entry per column
-
-// =============================================
-// 🟢 EXIT PLAN MODE (DONE)
-// =============================================
-
-doneBtn.addEventListener("click", () => {
-	foods = []; // reset plan
-
-	columns.forEach((column, index) => {
-		column.classList.remove("plan-mode");
-
-		// Grab inputs
+		// Grab inputs for this column
 		const inputs = column.querySelectorAll(".plan-inputs input");
 
 		const foodName = inputs[0].value || `Food ${index + 1}`;
 		const totalServings = Number(inputs[1].value);
 		const totalCalories = Number(inputs[2].value);
-		let oneServing = Number(inputs[3].value);
+		const oneServing = Number(inputs[3].value);
 
-		// =============================================
-		// ✅ FIX 1: SANITIZE INPUTS
-		// =============================================
-
-		// Basic numeric validation
+		// ✅ Strict validation (your chosen behavior)
 		if (
 			!Number.isFinite(totalServings) ||
 			totalServings <= 0 ||
@@ -131,11 +56,10 @@ doneBtn.addEventListener("click", () => {
 			!Number.isFinite(oneServing) ||
 			oneServing <= 0
 		) {
-			console.warn(`Invalid plan for column ${index + 1}`);
-			return;
+			console.warn(`Skipping column ${index + 1} — incomplete`);
+			continue; // ⬅️ THIS IS THE FIX
 		}
 
-		// ❗ servingStep must NEVER exceed totalServings
 		if (oneServing > totalServings) {
 			alert(
 				`One serving cannot be greater than total servings.\n\n` +
@@ -143,106 +67,139 @@ doneBtn.addEventListener("click", () => {
 					`Total servings: ${totalServings}\n` +
 					`One serving: ${oneServing}`,
 			);
-			return;
+			continue; // stop plan set entirely (strict)
 		}
 
-		// =============================================
-		// 🧮 CALCULATIONS
-		// =============================================
-
+		// Derived, not stored
 		const caloriesPerServing = totalCalories / totalServings;
 
-		// Build food object
-		const food = {
+		foods[index] = {
 			name: foodName,
 			totalServings,
 			totalCalories,
-			oneServing, // ✅ renamed
-			caloriesPerServing,
+			oneServing,
 			consumedServings: 0,
 		};
 
-		foods[index] = food;
-
-		// =============================
-		// 🔄 UPDATE UI
-		// =============================
-
-		// Update name
+		// UI update
 		column.querySelector(".food-name").textContent = foodName;
-
-		// Initialize remaining text (full amount)
 		column.querySelector(".remaining").textContent =
 			`Remaining: ${totalServings}/${totalServings} servings • ${totalCalories} kcal`;
+		column.querySelector(".bar-consumed").style.height = "0%";
+	}
+	if (!isValid) {
+		return; // ⛔ do NOT save, do NOT toggle UI
+	}
 
-		// Reset bar
-		const barConsumed = column.querySelector(".bar-consumed");
-		barConsumed.style.height = "0%";
-	});
-
+	// Toggle buttons
 	doneBtn.hidden = true;
 	planBtn.style.display = "inline-block";
 
-	console.log("Plan set:", foods);
-
+	// ✅ Save snapshot
 	window.mealAPI.saveData({
 		version: 1,
 		hasActivePlan: true,
 		foods,
 	});
+
+	console.log("Plan set + saved:", foods);
 });
 
 // =============================================
-// ➖ MINUS BUTTON LOGIC — Consume Food
+// ➖ MINUS BUTTON LOGIC — Consume + Save
 // =============================================
-
 columns.forEach((column, index) => {
 	const minusBtn = column.querySelector(".minus-btn");
 
 	minusBtn.addEventListener("click", () => {
 		const food = foods[index];
 
-		// Guard: no plan set for this column
 		if (!food) {
 			console.warn(`No plan set for column ${index + 1}`);
 			return;
 		}
 
-		// Increase consumed servings
+		// Consume
 		food.consumedServings += food.oneServing;
 
-		// Clamp to total servings
+		// Clamp
 		if (food.consumedServings > food.totalServings) {
 			food.consumedServings = food.totalServings;
 		}
 
-		// Calculate calories
-		const consumedCalories = food.consumedServings * food.caloriesPerServing;
+		// Derived calculations
+		const caloriesPerServing = food.totalCalories / food.totalServings;
+		const consumedCalories = food.consumedServings * caloriesPerServing;
+		const remainingCalories = Math.max(
+			0,
+			Math.round(food.totalCalories - consumedCalories),
+		);
+		const remainingServings = Math.max(
+			0,
+			food.totalServings - food.consumedServings,
+		);
 
-		const remainingCalories = food.totalCalories - consumedCalories;
-
-		// =================================
-		// 🔄 UPDATE UI
-		// =================================
-
-		// Update remaining text
+		// UI update
 		column.querySelector(".remaining").textContent =
-			`Remaining: ${Math.max(0, Math.round(remainingCalories))} kcal`;
+			`Remaining: ${remainingServings}/${food.totalServings} servings • ${remainingCalories} kcal`;
 
-		// Update bar height
 		const percentageConsumed =
 			(food.consumedServings / food.totalServings) * 100;
-
 		column.querySelector(".bar-consumed").style.height =
 			`${percentageConsumed}%`;
 
-		console.log(
-			`${food.name}: ${food.consumedServings}/${food.totalServings} servings`,
-		);
-		window.mealAPI.saveData({
-			version: 1,
-			hasActivePlan: true,
-			foods,
-		});
+		// ✅ Save snapshot
+		if (window.mealAPI?.saveData) {
+			window.mealAPI.saveData({
+				version: 1,
+				hasActivePlan: true,
+				foods,
+			});
+		} else {
+			console.error("mealAPI not available — preload failed");
+		}
+
+		console.log(`${food.name}: ${food.consumedServings}/${food.totalServings}`);
 	});
 });
+
+// =============================================
+// 🔄 LOAD SAVED PLAN ON STARTUP (after foods exists)
+// =============================================
+(async () => {
+	const saved = await window.mealAPI.loadData();
+
+	if (!saved || !saved.hasActivePlan || !Array.isArray(saved.foods)) {
+		console.log("No active plan found.");
+		return;
+	}
+
+	foods = saved.foods;
+
+	columns.forEach((column, index) => {
+		const food = foods[index];
+		if (!food) return;
+
+		const caloriesPerServing = food.totalCalories / food.totalServings;
+		const consumedCalories = food.consumedServings * caloriesPerServing;
+		const remainingCalories = Math.max(
+			0,
+			Math.round(food.totalCalories - consumedCalories),
+		);
+		const remainingServings = Math.max(
+			0,
+			food.totalServings - food.consumedServings,
+		);
+
+		column.querySelector(".food-name").textContent = food.name;
+		column.querySelector(".remaining").textContent =
+			`Remaining: ${remainingServings}/${food.totalServings} servings • ${remainingCalories} kcal`;
+
+		const percentageConsumed =
+			(food.consumedServings / food.totalServings) * 100;
+		column.querySelector(".bar-consumed").style.height =
+			`${percentageConsumed}%`;
+	});
+
+	console.log("Plan restored from storage:", foods);
+})();

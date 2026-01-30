@@ -6,7 +6,7 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 // Node utility for paths
-const path = require("path");
+// const path = require("path");
 
 // =============================================
 // 🔐 SAFE API EXPOSURE
