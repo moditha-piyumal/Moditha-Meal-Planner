@@ -18,6 +18,10 @@ let foods = []; // index = column index
 planBtn.addEventListener("click", () => {
 	columns.forEach((column) => {
 		column.classList.add("plan-mode");
+		const planInputs = column.querySelector(".plan-inputs");
+		if (planInputs) {
+			planInputs.hidden = false;
+		}
 	});
 
 	planBtn.style.display = "none";
@@ -28,13 +32,11 @@ planBtn.addEventListener("click", () => {
 // 🟢 EXIT PLAN MODE (DONE) — Set plan + Save
 // =============================================
 doneBtn.addEventListener("click", () => {
-	foods = []; // new plan overwrites old plan in memory
-	let isValid = true;
-	isValid = false;
-	return;
+	foods = Array.from({ length: columns.length }, () => null); // new plan overwrites old plan in memory
 
 	for (let index = 0; index < columns.length; index++) {
 		const column = columns[index];
+		const defaultName = `Food ${index + 1}`;
 
 		// Remove plan-mode (hides inputs via CSS)
 		column.classList.remove("plan-mode");
@@ -42,12 +44,12 @@ doneBtn.addEventListener("click", () => {
 		// Grab inputs for this column
 		const inputs = column.querySelectorAll(".plan-inputs input");
 
-		const foodName = inputs[0].value || `Food ${index + 1}`;
+		const foodName = inputs[0].value.trim() || defaultName;
 		const totalServings = Number(inputs[1].value);
 		const totalCalories = Number(inputs[2].value);
 		const oneServing = Number(inputs[3].value);
 
-		// ✅ Strict validation (your chosen behavior)
+		// Skip incomplete columns without blocking the rest
 		if (
 			!Number.isFinite(totalServings) ||
 			totalServings <= 0 ||
@@ -57,6 +59,9 @@ doneBtn.addEventListener("click", () => {
 			oneServing <= 0
 		) {
 			console.warn(`Skipping column ${index + 1} — incomplete`);
+			column.querySelector(".food-name").textContent = defaultName;
+			column.querySelector(".remaining").textContent = "Remaining: -- kcal";
+			column.querySelector(".bar-consumed").style.height = "0%";
 			continue; // ⬅️ THIS IS THE FIX
 		}
 
@@ -67,11 +72,11 @@ doneBtn.addEventListener("click", () => {
 					`Total servings: ${totalServings}\n` +
 					`One serving: ${oneServing}`,
 			);
+			column.querySelector(".food-name").textContent = defaultName;
+			column.querySelector(".remaining").textContent = "Remaining: -- kcal";
+			column.querySelector(".bar-consumed").style.height = "0%";
 			continue; // stop plan set entirely (strict)
 		}
-
-		// Derived, not stored
-		const caloriesPerServing = totalCalories / totalServings;
 
 		foods[index] = {
 			name: foodName,
@@ -87,20 +92,22 @@ doneBtn.addEventListener("click", () => {
 			`Remaining: ${totalServings}/${totalServings} servings • ${totalCalories} kcal`;
 		column.querySelector(".bar-consumed").style.height = "0%";
 	}
-	if (!isValid) {
-		return; // ⛔ do NOT save, do NOT toggle UI
-	}
 
 	// Toggle buttons
 	doneBtn.hidden = true;
 	planBtn.style.display = "inline-block";
 
 	// ✅ Save snapshot
-	window.mealAPI.saveData({
-		version: 1,
-		hasActivePlan: true,
-		foods,
-	});
+	if (window.mealAPI?.saveData) {
+		const hasActivePlan = foods.some(Boolean);
+		window.mealAPI.saveData({
+			version: 1,
+			hasActivePlan,
+			foods,
+		});
+	} else {
+		console.error("mealAPI not available — preload failed");
+	}
 
 	console.log("Plan set + saved:", foods);
 });
@@ -167,6 +174,11 @@ columns.forEach((column, index) => {
 // 🔄 LOAD SAVED PLAN ON STARTUP (after foods exists)
 // =============================================
 (async () => {
+	if (!window.mealAPI?.loadData) {
+		console.error("mealAPI not available — preload failed");
+		return;
+	}
+
 	const saved = await window.mealAPI.loadData();
 
 	if (!saved || !saved.hasActivePlan || !Array.isArray(saved.foods)) {

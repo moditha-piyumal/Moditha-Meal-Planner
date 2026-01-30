@@ -25,8 +25,10 @@ function createWindow() {
 		resizable: false, // simple utility app — fixed layout
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
-			// ❗ No nodeIntegration here
-			// We will do things the right way via preload
+			contextIsolation: true,
+			sandbox: true,
+			nodeIntegration: false,
+			// ❗ No nodeIntegration here — use preload + IPC
 		},
 	});
 
