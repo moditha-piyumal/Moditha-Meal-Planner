@@ -34,7 +34,7 @@ body {
 #abacus {
     display: flex;
     /* 🔑 side-by-side columns */
-    gap: 12px;
+    gap: 16px;
     /* space between columns */
     align-items: flex-end;
     /* bars align at bottom */
@@ -45,8 +45,10 @@ body {
 ============================================ */
 
 .column {
-    width: 70px;
-    /* fixed width for each food */
+    flex: 1;
+    /* ⬅️ expand to fill space */
+    min-width: 80px;
+    /* ⬅️ prevent too-narrow columns */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -115,11 +117,25 @@ body {
 
 .plan-inputs {
     display: none;
-    /* hidden by default */
     flex-direction: column;
     gap: 4px;
     width: 100%;
-    margin-top: 6px;
+    margin-top: 4px;
+    padding: 6px;
+    background: #f5f7ff;
+    /* subtle panel */
+    border-radius: 6px;
+}
+
+/* ============================================
+   ✍️ INPUT PLACEHOLDER VISIBILITY
+============================================ */
+
+.plan-inputs input::placeholder {
+    color: #555;
+    /* darker gray */
+    opacity: 1;
+    /* override browser default */
 }
 
 .column.plan-mode .plan-inputs {
@@ -135,5 +151,19 @@ body {
 .plan-inputs input {
     width: 100%;
     font-size: 12px;
-    padding: 2px;
+    /* was 11px */
+    padding: 4px 6px;
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.plan-inputs label {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    /* ⬅️ more readable */
+    font-weight: 500;
+    /* ⬅️ subtle emphasis */
+    color: #222;
 }

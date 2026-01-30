@@ -35,6 +35,48 @@ doneBtn.addEventListener("click", () => {
 });
 
 // =============================================
+// 🔄 LOAD SAVED PLAN ON STARTUP
+// =============================================
+
+(async () => {
+	const saved = await window.mealAPI.loadData();
+
+	if (!saved || !saved.hasActivePlan || !Array.isArray(saved.foods)) {
+		console.log("No active plan found.");
+		return;
+	}
+
+	foods = [];
+
+	columns.forEach((column, index) => {
+		const food = saved.foods[index];
+		if (!food) return;
+
+		foods[index] = food;
+
+		// Restore UI
+		column.querySelector(".food-name").textContent = food.name;
+
+		const caloriesPerServing = food.totalCalories / food.totalServings;
+
+		const consumedCalories = food.consumedServings * caloriesPerServing;
+
+		const remainingCalories = Math.max(
+			0,
+			Math.round(food.totalCalories - consumedCalories),
+		);
+
+		column.querySelector(".remaining").textContent =
+			`Remaining: ${food.totalServings - food.consumedServings}/${food.totalServings} servings • ${remainingCalories} kcal`;
+
+		column.querySelector(".bar-consumed").style.height =
+			`${(food.consumedServings / food.totalServings) * 100}%`;
+	});
+
+	console.log("Plan restored from storage.");
+})();
+
+// =============================================
 // 🟡 ENTER PLAN MODE
 // =============================================
 planBtn.addEventListener("click", () => {
@@ -74,7 +116,7 @@ doneBtn.addEventListener("click", () => {
 		const foodName = inputs[0].value || `Food ${index + 1}`;
 		const totalServings = Number(inputs[1].value);
 		const totalCalories = Number(inputs[2].value);
-		let servingStep = Number(inputs[3].value);
+		let oneServing = Number(inputs[3].value);
 
 		// =============================================
 		// ✅ FIX 1: SANITIZE INPUTS
@@ -86,17 +128,20 @@ doneBtn.addEventListener("click", () => {
 			totalServings <= 0 ||
 			!Number.isFinite(totalCalories) ||
 			totalCalories <= 0 ||
-			!Number.isFinite(servingStep) ||
-			servingStep <= 0
+			!Number.isFinite(oneServing) ||
+			oneServing <= 0
 		) {
 			console.warn(`Invalid plan for column ${index + 1}`);
 			return;
 		}
 
 		// ❗ servingStep must NEVER exceed totalServings
-		if (servingStep > totalServings) {
+		if (oneServing > totalServings) {
 			alert(
-				`Serving step cannot be bigger than total servings (column ${index + 1})`,
+				`One serving cannot be greater than total servings.\n\n` +
+					`Column ${index + 1}: ${foodName}\n` +
+					`Total servings: ${totalServings}\n` +
+					`One serving: ${oneServing}`,
 			);
 			return;
 		}
@@ -112,7 +157,7 @@ doneBtn.addEventListener("click", () => {
 			name: foodName,
 			totalServings,
 			totalCalories,
-			servingStep, // ✅ sanitized
+			oneServing, // ✅ renamed
 			caloriesPerServing,
 			consumedServings: 0,
 		};
@@ -139,6 +184,12 @@ doneBtn.addEventListener("click", () => {
 	planBtn.style.display = "inline-block";
 
 	console.log("Plan set:", foods);
+
+	window.mealAPI.saveData({
+		version: 1,
+		hasActivePlan: true,
+		foods,
+	});
 });
 
 // =============================================
@@ -158,7 +209,7 @@ columns.forEach((column, index) => {
 		}
 
 		// Increase consumed servings
-		food.consumedServings += food.servingStep;
+		food.consumedServings += food.oneServing;
 
 		// Clamp to total servings
 		if (food.consumedServings > food.totalServings) {
@@ -188,5 +239,10 @@ columns.forEach((column, index) => {
 		console.log(
 			`${food.name}: ${food.consumedServings}/${food.totalServings} servings`,
 		);
+		window.mealAPI.saveData({
+			version: 1,
+			hasActivePlan: true,
+			foods,
+		});
 	});
 });
