@@ -10,16 +10,16 @@
 body {
     margin: 12px;
     color: #111;
-
     background: #555;
-}
-
-#app {
-    /* background: rgba(255, 255, 255, 0.68); */
     background-image: url("./background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+#app {
+    background: rgba(255, 255, 255, 0.68);
+
 
     /* VERY IMPORTANT */
     background-attachment: scroll;
