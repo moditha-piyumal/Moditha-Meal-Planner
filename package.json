@@ -1,6 +1,6 @@
 {
 	"name": "moditha-meal-abacus",
-	"version": "0.1.3",
+	"version": "0.2.0",
 	"description": "A simple abacus-style meal planner built with Electron",
 	"main": "main.js",
 	"author": "Moditha",
