@@ -131,6 +131,7 @@ doneBtn.addEventListener("click", () => {
 	}
 
 	console.log("Plan set + saved:", foods);
+	updateGlobalRemainingCalories();
 });
 
 // =============================================
@@ -176,6 +177,8 @@ columns.forEach((column, index) => {
 		column.querySelector(".bar-consumed").style.height =
 			`${percentageConsumed}%`;
 
+		updateGlobalRemainingCalories();
+
 		// ✅ Save snapshot
 		if (window.mealAPI?.saveData) {
 			window.mealAPI.saveData({
@@ -190,6 +193,30 @@ columns.forEach((column, index) => {
 		console.log(`${food.name}: ${food.consumedServings}/${food.totalServings}`);
 	});
 });
+
+// =============================================
+// 🔢 GLOBAL REMAINING CALORIES
+// =============================================
+function updateGlobalRemainingCalories() {
+	let totalRemaining = 0;
+
+	foods.forEach((food) => {
+		if (!food) return;
+
+		const caloriesPerServing = food.totalCalories / food.totalServings;
+
+		const consumedCalories = food.consumedServings * caloriesPerServing;
+
+		const remainingCalories = food.totalCalories - consumedCalories;
+
+		totalRemaining += remainingCalories;
+	});
+
+	document.getElementById("remainingCalories").textContent = Math.max(
+		0,
+		Math.round(totalRemaining),
+	);
+}
 
 // =============================================
 // 🔄 LOAD SAVED PLAN ON STARTUP (after foods exists)
@@ -235,4 +262,5 @@ columns.forEach((column, index) => {
 	});
 
 	console.log("Plan restored from storage:", foods);
+	updateGlobalRemainingCalories();
 })();

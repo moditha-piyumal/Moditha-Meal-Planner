@@ -10,11 +10,17 @@
 body {
     margin: 12px;
     color: #111;
-    background: #555;
+
+
     background-image: url("./background.jpg");
-    background-size: cover;
-    background-position: center;
+    background-size: 100% auto;
+    /* width fixed, height auto */
+    /* ⬅️ key change */
     background-repeat: no-repeat;
+
+    /* position freely now */
+    background-position: center 20px;
+
 }
 
 #app {
@@ -68,6 +74,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
+    flex-shrink: 0;
+    /* 🔒 bar will never shrink or move */
 }
 
 /* ============================================
@@ -85,6 +94,8 @@ body {
     overflow: hidden;
     /* important for overlay */
     margin-bottom: 8px;
+    flex-shrink: 0;
+    /* 🔑 prevents bar from resizing */
 }
 
 /* Bars should never block clicking inputs */
@@ -110,14 +121,27 @@ body {
 ============================================ */
 
 .info {
+    margin-top: auto;
+    /* 🔥 THIS is the magic line */
     text-align: center;
     font-size: 13px;
     margin-bottom: 6px;
+
+    /* 🔑 NEW */
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .food-name {
     font-weight: bold;
     margin-bottom: 4px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .remaining {
@@ -131,6 +155,8 @@ body {
     height: 28px;
     font-size: 18px;
     cursor: pointer;
+    margin-top: auto;
+    /* 🔑 pushes button to bottom of info block */
 }
 
 /* ============================================
@@ -188,4 +214,36 @@ body {
     font-weight: 500;
     /* ⬅️ subtle emphasis */
     color: #222;
+}
+
+#global-remaining {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 10px 0 16px;
+    font-size: 22px;
+}
+
+#global-remaining .label {
+    font-weight: 500;
+    color: #333;
+}
+
+#global-remaining .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 6px 14px;
+    border-radius: 999px;
+    /* 🟢 pill shape */
+
+    background: #eef6ff;
+    color: #0b5ed7;
+
+    font-weight: 600;
+    font-size: 22px;
+
+    box-shadow: inset 0 0 0 1px rgba(11, 94, 215, 0.15);
 }
